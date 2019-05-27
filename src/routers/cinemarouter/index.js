@@ -1,4 +1,22 @@
 export default {
     path:"/cinema",
     component:()=>import("@views/Cinema"),
+    children:[
+        {
+            path:"quanchen",
+            component:()=>import("@components/Cinema/Quanchen")
+        },
+        {
+            path:"pinpei",
+            component:()=>import("@components/Cinema/Pinpei")
+        },
+        {
+            path:"special",
+            component:()=>import("@components/Cinema/Special")
+        },
+        {
+            path:"/cinema",
+            redirect:"/cinema/pinpei"
+        }
+    ]
 }
