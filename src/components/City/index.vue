@@ -1,101 +1,59 @@
 <template>
     <div class="city_body">
+    <!-- 数据渲染 -->
         <div class="city_list">
             <div class="city_hot">
                 <h2>热门城市</h2>
                 <ul class="clearfix">
-                    <li>上海</li>
-                    <li>北京</li>
-                    <li>上海</li>
-                    <li>北京</li>
-                    <li>上海</li>
-                    <li>北京</li>
-                    <li>上海</li>
-                    <li>北京</li>
+                    <li v-for="item in hotList" :key="item.id">
+                        {{item.nm}}
+                    </li>
                 </ul>
             </div>
-            <div class="city_sort">
-                <div>
-                    <h2>A</h2>
+            <div class="city_sort" ref="city_sort">
+                <div v-for="item in cityList" :key="item.index">
+                    <h2>{{item.index}}</h2>
                     <ul>
-                        <li>阿拉善盟</li>
-                        <li>鞍山</li>
-                        <li>安庆</li>
-                        <li>安阳</li>
+                        <li v-for="itemList in item.list" :key="itemList.id">
+                            {{itemList.nm}}
+                        </li>
                     </ul>
                 </div>
-                <div>
-                    <h2>B</h2>
-                    <ul>
-                        <li>北京</li>
-                        <li>保定</li>
-                        <li>蚌埠</li>
-                        <li>包头</li>
-                    </ul>
-                </div>
-                <div>
-                    <h2>A</h2>
-                    <ul>
-                        <li>阿拉善盟</li>
-                        <li>鞍山</li>
-                        <li>安庆</li>
-                        <li>安阳</li>
-                    </ul>
-                </div>
-                <div>
-                    <h2>B</h2>
-                    <ul>
-                        <li>北京</li>
-                        <li>保定</li>
-                        <li>蚌埠</li>
-                        <li>包头</li>
-                    </ul>
-                </div>
-                <div>
-                    <h2>A</h2>
-                    <ul>
-                        <li>阿拉善盟</li>
-                        <li>鞍山</li>
-                        <li>安庆</li>
-                        <li>安阳</li>
-                    </ul>
-                </div>
-                <div>
-                    <h2>B</h2>
-                    <ul>
-                        <li>北京</li>
-                        <li>保定</li>
-                        <li>蚌埠</li>
-                        <li>包头</li>
-                    </ul>
-                </div>	
             </div>
         </div>
+        <!-- 右侧列表 -->
         <div class="city_index">
             <ul>
-                <li>A</li>
-                <li>B</li>
-                <li>C</li>
-                <li>D</li>
-                <li>E</li>
+                <li v-for="(item,index) in cityList" 
+                :key="item.index"
+                @touchstart="handleToIndex(index)">
+                    {{item.index}}
+                </li>
             </ul>
         </div>
-    </div>
-		
+    </div>		
 </template>
 
 <script>
 import { log } from 'util';
 export default {
     name:"City",
+    data() {
+        return {
+            cityList:[],
+            hotList:[]
+        }
+    },
     mounted() {
         this.axios.get("/api/cityList").then((res)=>{
-            console.log(res.data);
+            // console.log(res.data);
             var msg = res.data.msg;
             if (msg === "ok") {
                 var cities = res.data.data.cities;
                 // [ { index:"A",List:[{ nm:"aa",id:111 }] } ]
-                this.formatcityList(cities);  // 调用
+                var { cityList,hotList } = this.formatcityList(cities);  // 调用,解析数据
+                this.cityList = cityList;   // 实现映射
+                this.hotList = hotList;
             }
         });
     },
@@ -103,6 +61,14 @@ export default {
         formatcityList(cities){
             var cityList = [];
             var hotList = [];
+
+            // 热门城市
+            for (let i = 0; i < cities.length; i++) {
+                if (cities[i].isHot === 1) {
+                    hotList.push(cities[i]);
+                }
+            }
+            // 城市列表
             for (var i = 0; i < cities.length; i++) {
                 // 设置一个标识
                 var firstletter = cities[i].py.substring(0,1).toUpperCase();// 字符串拆分，大小写
@@ -143,8 +109,22 @@ export default {
                 }
                 return true;
             }
-            console.log(cityList);// 按索引分类
-        }//formatcityList
+            // console.log(cityList);// 按索引分类
+            // console.log(hotList);// 按索引分类
+            return {
+                cityList,
+                hotList
+            }
+        },//formatcityList
+
+        // 2.右侧列表点击事件,原生JS实现
+        handleToIndex(index){
+            console.log(index);
+            var h2 = this.$refs.city_sort.getElementsByTagName("h2");
+            this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop;
+        },
+        
+
     },
 }
 </script>
