@@ -119,7 +119,7 @@ export default {
 
         // 2.右侧列表点击事件,原生JS实现
         handleToIndex(index){
-            console.log(index);
+            // console.log(index);
             var h2 = this.$refs.city_sort.getElementsByTagName("h2");
             this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop;
         },

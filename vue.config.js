@@ -21,6 +21,7 @@ module.exports = {
     //   .set("API", resolve("src/api"))
     //   .set("fetch", resolve("src/api/fetch"))
       .set("@views", resolve("src/views"))
-      .set("@components", resolve("src/components"));
+      .set("@components", resolve("src/components"))
+      .set("@assets", resolve("src/assets"));
   }
 }

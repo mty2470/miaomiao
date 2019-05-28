@@ -3,8 +3,14 @@ import App from './App.vue'
 import router from './routers'
 import store from './stores'
 
+// 1.引入axios，全局中使用
 import axios from 'axios'
 Vue.prototype.axios = axios
+
+// 2.过滤器
+Vue.filter('setWH',(url,arg)=>{
+  return url.replace(/w\.h/,arg);
+})
 
 Vue.config.productionTip = false
 
