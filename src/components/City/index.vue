@@ -85,8 +85,67 @@
 </template>
 
 <script>
+import { log } from 'util';
 export default {
-    name:"City"
+    name:"City",
+    mounted() {
+        this.axios.get("/api/cityList").then((res)=>{
+            console.log(res.data);
+            var msg = res.data.msg;
+            if (msg === "ok") {
+                var cities = res.data.data.cities;
+                // [ { index:"A",List:[{ nm:"aa",id:111 }] } ]
+                this.formatcityList(cities);  // 调用
+            }
+        });
+    },
+    methods: {
+        formatcityList(cities){
+            var cityList = [];
+            var hotList = [];
+            for (var i = 0; i < cities.length; i++) {
+                // 设置一个标识
+                var firstletter = cities[i].py.substring(0,1).toUpperCase();// 字符串拆分，大小写
+                if (toCom(firstletter)) {// 新添加的index
+                    cityList.push( {index:firstletter,list:[ 
+                        {
+                            nm:cities[i].nm,
+                            id:cities[i].id
+                        } 
+                    ]} );
+                }else{ // 相同的累加到index中
+                    for (var j = 0; j < cityList.length; j++) {
+                        if (cityList[j].index === firstletter) {
+                            cityList[j].list.push( {// 只要在list中累加就行
+                                nm:cities[i].nm,
+                                id:cities[i].id
+                            } )
+                        }
+                    }
+                }
+            }
+            // 数组的排序,顺序和正负值相关
+            cityList.sort((n1,n2)=>{
+                if (n1.index > n2.index) {
+                    return 1;
+                } else if(n1.index < n2.index){
+                    return -1;
+                } else{
+                    return 0;
+                }
+            });
+            // 对标识进行判断 index
+            function toCom(firstletter){
+                for (var i = 0; i < cityList.length; i++) {
+                    if (cityList[i].index === firstletter) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            console.log(cityList);// 按索引分类
+        }//formatcityList
+    },
 }
 </script>
 
