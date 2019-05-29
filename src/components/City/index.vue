@@ -2,24 +2,31 @@
     <div class="city_body">
     <!-- 数据渲染 -->
         <div class="city_list">
-            <div class="city_hot">
-                <h2>热门城市</h2>
-                <ul class="clearfix">
-                    <li v-for="item in hotList" :key="item.id">
-                        {{item.nm}}
-                    </li>
-                </ul>
-            </div>
-            <div class="city_sort" ref="city_sort">
-                <div v-for="item in cityList" :key="item.index">
-                    <h2>{{item.index}}</h2>
-                    <ul>
-                        <li v-for="itemList in item.list" :key="itemList.id">
-                            {{itemList.nm}}
-                        </li>
-                    </ul>
+            <Loading v-if="isloading"/>
+            <Scroller v-else ref="city_list">
+                <!-- 有两层div时，再次包裹，保证scroller内部只有一个大标签 -->
+                <div>
+                    <div class="city_hot">
+                        <h2>热门城市</h2>
+                        <ul class="clearfix">
+                            <li v-for="item in hotList" :key="item.id">
+                                {{item.nm}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="city_sort" ref="city_sort">
+                        <div v-for="item in cityList" :key="item.index">
+                            <h2>{{item.index}}</h2>
+                            <ul>
+                                <li v-for="itemList in item.list" :key="itemList.id">
+                                    {{itemList.nm}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div> 
                 </div>
-            </div>
+
+            </Scroller>
         </div>
         <!-- 右侧列表 -->
         <div class="city_index">
@@ -41,7 +48,8 @@ export default {
     data() {
         return {
             cityList:[],
-            hotList:[]
+            hotList:[],
+            isloading:true
         }
     },
     mounted() {
@@ -54,6 +62,7 @@ export default {
                 var { cityList,hotList } = this.formatcityList(cities);  // 调用,解析数据
                 this.cityList = cityList;   // 实现映射
                 this.hotList = hotList;
+                this.isloading = false
             }
         });
     },
@@ -72,6 +81,7 @@ export default {
             for (var i = 0; i < cities.length; i++) {
                 // 设置一个标识
                 var firstletter = cities[i].py.substring(0,1).toUpperCase();// 字符串拆分，大小写
+                
                 if (toCom(firstletter)) {// 新添加的index
                     cityList.push( {index:firstletter,list:[ 
                         {
@@ -82,7 +92,7 @@ export default {
                 }else{ // 相同的累加到index中
                     for (var j = 0; j < cityList.length; j++) {
                         if (cityList[j].index === firstletter) {
-                            cityList[j].list.push( {// 只要在list中累加就行
+                            cityList[j].list.push( {// 如果标识是相等的，只要在list中累加就行
                                 nm:cities[i].nm,
                                 id:cities[i].id
                             } )
@@ -95,7 +105,7 @@ export default {
                 if (n1.index > n2.index) {
                     return 1;
                 } else if(n1.index < n2.index){
-                    return -1;
+                    return -1;// n1 在 n2之前
                 } else{
                     return 0;
                 }
@@ -121,7 +131,9 @@ export default {
         handleToIndex(index){
             // console.log(index);
             var h2 = this.$refs.city_sort.getElementsByTagName("h2");
-            this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop;
+            this.$refs.city_list.toScrollTop(-h2[index].offsetTop);// Scroller组件中的方法直接来使用
+            // 注意：引入scroll组件，原生的方法不管用。
+            // this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop;
         },
         
 
@@ -136,7 +148,7 @@ export default {
     background-color:transparent;
     width:0;
 }
-.city_body .city_hot{ margin-top: 20px;}
+.city_body .city_hot{ margin-top: 10px;}
 .city_body .city_hot h2{ padding-left: 15px; line-height: 30px; font-size: 14px; background:#F0F0F0; font-weight: normal;}
 .city_body .city_hot ul li{ float: left; background: #fff; width: 29%; height: 33px; margin-top: 15px; margin-left: 3%; padding: 0 4px; border: 1px solid #e6e6e6; border-radius: 3px; line-height: 33px; text-align: center; box-sizing: border-box;}
 .city_body .city_sort div{ margin-top: 20px;}
