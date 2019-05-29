@@ -1,28 +1,31 @@
 <template>
     <div class="cinema_body">
-        <ul>
-            <li v-for="item in cinemaList" :key="item.id">
-                <div>
-                    <span>{{item.nm}}</span>
-                    <span class="q"><span class="price">{{item.sellPrice}}</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>{{item.addr}}</span>
-                    <span>{{item.distance}}</span>
-                </div>
-                <div class="card">
-                    <div v-for="(itemcard,key) in item.tag" 
-                    :key="key"
-                    :class=" key | classCards"
-                    v-if="itemcard === 1">
-                    <!-- 会有警告，if 和 for不能混用 -->
-                        {{ key | formatCards }}
-                        <!-- 拿到key值，调用过滤器 -->
+        <Loading v-if="isloading"/>
+        <Scroller v-else>
+            <ul>
+                <li v-for="item in cinemaList" :key="item.id">
+                    <div>
+                        <span>{{item.nm}}</span>
+                        <span class="q"><span class="price">{{item.sellPrice}}</span> 元起</span>
                     </div>
-                </div>
-            </li>
+                    <div class="address">
+                        <span>{{item.addr}}</span>
+                        <span>{{item.distance}}</span>
+                    </div>
+                    <div class="card">
+                        <div v-for="(itemcard,key) in item.tag" 
+                        :key="key"
+                        :class=" key | classCards"
+                        v-if="itemcard === 1">
+                        <!-- 会有警告，if 和 for不能混用 -->
+                            {{ key | formatCards }}
+                            <!-- 拿到key值，调用过滤器 -->
+                        </div>
+                    </div>
+                </li>
 
-        </ul>
+            </ul>
+        </Scroller>
     </div>
         
 </template>
@@ -32,7 +35,8 @@ export default {
     name:"Pinpei",
     data() {
         return {
-            cinemaList:[]
+            cinemaList:[],
+            isloading:true
         }
     },
     mounted() {
@@ -40,6 +44,7 @@ export default {
             var msg = res.data.msg;
             if (msg === "ok") {
                 this.cinemaList = res.data.data.cinemas;
+                this.isloading = false
             }
         })
     },
