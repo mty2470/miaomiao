@@ -33,16 +33,28 @@ export default {
         return {
             movieList:[],
             pullDown:'',
-            isloading:true
+            isloading:true,
+
+            // 只能在城市切换中才去渲染active，如果从 即将上映 到 热映 就不需要重新渲染
+            prevCityId:-1
         }
     },
-    mounted() {
-        this.axios.get("/api/movieOnInfoList?cityId=10").then((res)=>{
-            // console.log(res.data);
+    // mounted() {
+    activated() { // 换成keeo-alive的生命周期函数
+        // console.log(1); // 只执行一次，有keep-alive的存在
+
+        var cityid = this.$store.state.city.id;
+        if (this.prevCityId === cityid) {
+            return;// 就什么都不做，说明不是从城市组件切换过来的
+        }
+        this.isloading = true;
+        // console.log("数据加载！"); // 作为一个标识，是否从城市组件渲染过来，防止多次请求
+        this.axios.get("/api/movieOnInfoList?cityId="+cityid).then((res)=>{
             var msg = res.data.msg;
             if (msg === "ok") {
                 this.movieList = res.data.data.movieList;
                 this.isloading = false;
+                this.prevCityId = cityid;
                 // this.$nextTick(()=>{// 1.该方法会在界面渲染之后再去触发回调
                 //     var scroll = new BScroll(this.$refs.movie_body,{
                 //         tap:true,    // 2.配置之后实现点击事件
@@ -91,9 +103,10 @@ export default {
             function randomInt(min, max){
                 var num = min + Math.random()*(max-min);
                 return Math.round(num);// round讲一个数字舍入为最接近的整数
-            };// 可以随机获取城市的id
+            };// 可以随机数，充当城市ID，但是有误差，不适用。
             if (location.y>10) {
-                this.axios.get("/api/movieOnInfoList?cityId="+randomInt(1,500)).then((res)=>{
+                var Id = window.localStorage.getItem("nowID");
+                this.axios.get("/api/movieOnInfoList?cityId="+Id).then((res)=>{
                     var msg = res.data.msg;
                     if (msg === "ok") {
                         this.pullDown = "更新成功！";

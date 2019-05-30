@@ -43,11 +43,13 @@ export default {
     },
     watch:{// 函数的节流和防抖
         message(newvalue){
+            // 获取id
+            
             this.cancelRequest();
-
-            this.axios.get('/api/searchList?cityId=10&kw='+newvalue,{
+            var cityid = this.$store.state.city.id;
+            this.axios.get('/api/searchList?cityId='+cityid+'&kw='+newvalue,{
                 cancelToken: new this.axios.CancelToken((c)=>{
-                    this.source = c;
+                    this.source = c;// that 和this
                 })
             }).then((res)=>{
                 // console.log(res);
@@ -58,10 +60,10 @@ export default {
                 }
             }).catch((err)=>{
                 if (this.axios.isCancel(err)) {
-                    console.log('Rquest canceled', err.message); //请求如果被取消，这里是返回取消的message
+                    // console.log('Rquest canceled', err.message); //请求如果被取消，这里是返回取消的message
                 } else {
                     //handle error
-                    console.log(err);
+                    // console.log(err);
                 }
             });
         }

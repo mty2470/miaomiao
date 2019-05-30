@@ -28,16 +28,24 @@ export default {
     data() {
         return {
             comingList:[],
-            isloading:true
+            isloading:true,
+            prevCityId:-1
         }
     },
-    mounted() {
-        this.axios.get("/api/movieComingList?cityId=10").then((res)=>{
+    // mounted() {
+    activated() {
+        var cityid = this.$store.state.city.id;
+        if (this.prevCityId === cityid) {
+            return ;
+        }
+        this.isloading = true;
+        this.axios.get('/api/movieComingList?cityId='+cityid).then((res)=>{
             // console.log(res)
             var msg = res.data.msg;
             if (msg === "ok") {
                 this.comingList = res.data.data.comingList;
                 this.isloading = false;
+                this.prevCityId = cityid;
             }
         })
     },

@@ -36,15 +36,25 @@ export default {
     data() {
         return {
             cinemaList:[],
-            isloading:true
+            isloading:true,
+            prevCityId:-1
         }
     },
-    mounted() {
-        this.axios.get("/api/cinemaList?cityId=10").then((res)=>{
+    // mounted() {
+    activated() {
+
+        var cityid = this.$store.state.city.id;
+        if (this.prevCityId === cityid) {
+            return ;
+        }
+        this.isloading = true;
+
+        this.axios.get("/api/cinemaList?cityId="+cityid).then((res)=>{
             var msg = res.data.msg;
             if (msg === "ok") {
                 this.cinemaList = res.data.data.cinemas;
-                this.isloading = false
+                this.isloading = false;
+                this.prevCityId = cityid
             }
         })
     },
