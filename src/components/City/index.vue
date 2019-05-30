@@ -9,7 +9,9 @@
                     <div class="city_hot">
                         <h2>热门城市</h2>
                         <ul class="clearfix">
-                            <li v-for="item in hotList" :key="item.id">
+                            <li v-for="item in hotList" 
+                            :key="item.id"
+                            @tap ="handleToCity(item.nm,item.id)">
                                 {{item.nm}}
                             </li>
                         </ul>
@@ -18,7 +20,9 @@
                         <div v-for="item in cityList" :key="item.index">
                             <h2>{{item.index}}</h2>
                             <ul>
-                                <li v-for="itemList in item.list" :key="itemList.id">
+                                <li v-for="itemList in item.list" 
+                                :key="itemList.id"
+                                @tap ="handleToCity(itemList.nm,itemList.id)">
                                     {{itemList.nm}}
                                 </li>
                             </ul>
@@ -53,16 +57,29 @@ export default {
         }
     },
     mounted() {
+
+        // localstorage的使用
+        var cityList = window.localStorage.getItem("cityList");
+        var hotList = window.localStorage.getItem("hotList");
+        if (cityList && hotList) {
+            this.cityList = JSON.parse(cityList);
+            this.hotList = JSON.parse(hotList);
+            this.isloading = false;
+        }
+        // 否则就去请求
         this.axios.get("/api/cityList").then((res)=>{
             // console.log(res.data);
             var msg = res.data.msg;
             if (msg === "ok") {
+                this.isloading = false
                 var cities = res.data.data.cities;
                 // [ { index:"A",List:[{ nm:"aa",id:111 }] } ]
                 var { cityList,hotList } = this.formatcityList(cities);  // 调用,解析数据
                 this.cityList = cityList;   // 实现映射
                 this.hotList = hotList;
-                this.isloading = false
+                // localstorage 本地存储的使用
+                window.localStorage.setItem("cityList",JSON.stringify(cityList));
+                window.localStorage.setItem("hotList",JSON.stringify(hotList));// 
             }
         });
     },
@@ -132,10 +149,20 @@ export default {
             // console.log(index);
             var h2 = this.$refs.city_sort.getElementsByTagName("h2");
             this.$refs.city_list.toScrollTop(-h2[index].offsetTop);// Scroller组件中的方法直接来使用
+            
             // 注意：引入scroll组件，原生的方法不管用。
             // this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop;
         },
         
+        // 城市的状态管理
+        handleToCity(nm,id){
+            this.$store.commit("city/CITY_INFO",{nm,id});
+
+            // 和vuex实现关联，刷新时不会跳转到上一次的城市数据
+            window.localStorage.setItem("nowNM",nm);
+            window.localStorage.setItem("nowID",id)
+            this.$router.push("/movie/hotplay"); // 编程式路由实现跳转到热映页。
+        }
 
     },
 }

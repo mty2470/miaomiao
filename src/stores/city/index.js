@@ -1,0 +1,27 @@
+
+const state = {
+    // 从本地中去获取
+    nm:window.localStorage.getItem("nowNM") || "北京",
+    id:window.localStorage.getItem("nowID") || 1
+}
+
+
+const mutations = {
+    CITY_INFO(state,payload){
+        state.nm = payload.nm;
+        state.id = payload.id
+    }
+}
+
+
+const actions = {
+
+}
+
+
+export default {
+    namespaced:true,
+    state,
+    mutations,
+    actions
+}

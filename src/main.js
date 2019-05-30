@@ -22,7 +22,6 @@ Vue.component("Loading",Loading);
 
 
 
-
 Vue.config.productionTip = false
 new Vue({
   router,
