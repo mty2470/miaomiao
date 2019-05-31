@@ -73,10 +73,12 @@ export default {
             if (msg === "ok") {
                 this.isloading = false
                 var cities = res.data.data.cities;
+
                 // [ { index:"A",List:[{ nm:"aa",id:111 }] } ]
                 var { cityList,hotList } = this.formatcityList(cities);  // 调用,解析数据
                 this.cityList = cityList;   // 实现映射
                 this.hotList = hotList;
+                
                 // localstorage 本地存储的使用
                 window.localStorage.setItem("cityList",JSON.stringify(cityList));
                 window.localStorage.setItem("hotList",JSON.stringify(hotList));// 

@@ -24,6 +24,8 @@
                 </keep-alive>
 
             </div>  
+
+
         <TabBar/>
     </div>
 </template>
@@ -31,12 +33,50 @@
 <script>
 import Header from '@components/Header'
 import TabBar from '@components/TabBar'
+
+import {messageBox} from '@components/JS'
+
 export default {
     name:"Movie",
     components:{
         Header,
-        TabBar
-    }
+        TabBar,
+    },
+    // 进行内容的配置
+    mounted() {// 直接当做组件去使用
+
+        setTimeout(() => {
+            this.axios.get("/api/getLocation").then((res)=>{
+                var msg = res.data.msg;
+                    if (msg === "ok") {
+                        var nm = res.data.data.nm;
+                        var id = res.data.data.id;
+                        //如果相同的时候，就不要去弹窗了
+                        if (this.$store.state.city.id == id) {//类型不一致的问题 ==
+                            return ;
+                        } 
+
+                        messageBox({
+                            title:"当前城市:",
+                            content:nm,
+                            cancel:"取消",
+                            ok:"切换到"+nm,
+                            handleOk:function(){
+                                window.localStorage.setItem("nowNM",nm);
+                                window.localStorage.setItem("nowID",id);
+                                window.location.reload();
+                            },
+                            // handleCancel:function(){
+                            //     console.log(2)
+                            // }
+                        });            
+                    }
+                })        
+        }, 2000);
+
+    },
+
+
 }
 </script>
 

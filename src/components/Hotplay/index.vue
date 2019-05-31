@@ -42,7 +42,6 @@ export default {
     // mounted() {
     activated() { // 换成keeo-alive的生命周期函数
         // console.log(1); // 只执行一次，有keep-alive的存在
-
         var cityid = this.$store.state.city.id;
         if (this.prevCityId === cityid) {
             return;// 就什么都不做，说明不是从城市组件切换过来的
