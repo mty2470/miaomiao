@@ -23,28 +23,34 @@
 					<div class="detail_list_info">
 						<h2>{{detailMovie.nm}}</h2>
 						<p>{{detailMovie.enm}}</p>
-						<p>{{detailMovie.sc}}</p>
+						<p style="font-size:14px;color:orange;font-weight:700">{{detailMovie.wish}}人想看</p>
 						<p>{{detailMovie.cat}}</p>
 						<p>{{detailMovie.src}} / {{detailMovie.dur}}</p>
 						<p>{{detailMovie.pubDesc}}</p>
 					</div>
 				</div>
 			</div>
-			<div class="detail_intro">
+			<!-- <div class="detail_intro">
 				<p>{{detailMovie.dra}}</p>
-			</div>
+			</div> -->
+			<!-- 折叠面板的实现 -->
+				<van-collapse v-model="activeName" accordion>
+					<van-collapse-item title="剧情简介" name="1">
+						{{detailMovie.dra}}
+					</van-collapse-item>
+				</van-collapse>
 
 			<div class="detail_player swiper-container" ref="detail_player">
+				<p class="meiti">剧照：</p>
 				<ul class="swiper-wrapper">
 					<li class="swiper-slide"
 					v-for="(item,index) in detailMovie.photos" :key="index">
 						<div>
-							<img :src="item | setWH('108.168')" alt="">
+							<img :src="item | setWH('90.70')" alt="">
 						</div>
 					</li>
 				</ul>
 			</div>
-
 
 
 
@@ -58,12 +64,21 @@
 <script>
 import Header from '@components/Header'
 import BScroll from 'better-scroll'
+
+// 折叠面板
+import Vue from 'vue'
+import { Collapse, CollapseItem } from 'vant';
+Vue.use(Collapse).use(CollapseItem);
+
 export default {
 	name:"Detail",
 	data() {
 		return {
 			detailMovie:{},
-			isLoading:true
+			isLoading:true,
+			activeName:'1',
+	
+
 		}
 	},
     components:{
@@ -71,7 +86,7 @@ export default {
 	},
 	props:['movieid'],
 	mounted() {
-		console.log(this.movieid)
+		// console.log(this.movieid)
 		this.axios.get("/api/detailmovie?movieId="+this.movieid).then((res)=>{
             var msg = res.data.msg;
             if (msg === "ok") {
@@ -90,7 +105,7 @@ export default {
     methods: {
         handleback(){
             this.$router.back();
-        }
+		},
     },
 }
 </script>
@@ -119,7 +134,7 @@ export default {
 	100%{ transform: translateX(0%); }
 }
 #content .detail_list{ height:200px; width:100%; position: relative; overflow: hidden;}
-.detail_list .detail_list_bg{ width:100%; height:100%; background: 0 40%;  background-size:cover; position: absolute; left: 0; top: 0;}
+.detail_list .detail_list_bg{ width:100%; height:100%; filter: blur(20px);background: 0 40%;  background-size:cover; position: absolute; left: 0; top: 0;}
 .detail_list .detail_list_filter{ width:100%; height:100%; position: absolute;background-color: #40454d;opacity: .55; position: absolute; left: 0; top: 0; z-index: 1;}
 .detail_list .detail_list_content{ display: flex; width:100%; height:100%; position: absolute; left: 0; top: 0; z-index: 2;}
 .detail_list .detail_list_img{ width:108px; height: 150px; border: solid 1px #f0f2f3; margin:20px;}
@@ -130,8 +145,10 @@ export default {
 
 #content .detail_intro{ padding: 10px;}
 #content .detail_player{ margin:20px;}
-#detailContainer .detail_player .swiper-slide{ width:128px; margin-right: 10px; text-align: center; font-size: 14px;}
-#detailContainer .detail_player .swiper-slide img{ width:128px; height: 200px; margin-bottom: 5px;}
+#content .detail_player .video{ width: 100%;height: 300px; }
+#content .detail_player .meiti{ margin:0px 0 5px 0;font-weight: 700;color: #666;}
+#detailContainer .detail_player .swiper-slide{ width:90px; margin-right: 10px; text-align: center; font-size: 14px;}
+#detailContainer .detail_player .swiper-slide img{ width:90px; height: 70px; margin-bottom: 5px;}
 #detailContainer .detail_player .swiper-slide p:nth-of-type(2){ color:#999;}
 
 </style>

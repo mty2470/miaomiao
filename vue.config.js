@@ -4,12 +4,12 @@ function resolve(dir) {
 }
 // vue 项目脚手架执行的配置
 module.exports = {
+  // publicPath:"/miaomiao",
   devServer: {
     // 配置本地服务器的正向代理（开发环境）
     proxy: {
       "/api": {
         target: "http://39.97.33.178",
-        // target: "http://192.168.137.1:9090",
         changeOrigin: true
       }
     }
