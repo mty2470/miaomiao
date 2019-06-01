@@ -24,9 +24,11 @@
                 </keep-alive>
 
             </div>  
-
-
         <TabBar/>
+                <!-- 详情页的跳转，用命名视图来解决 -->
+                <router-view name="detail">
+
+                </router-view>
     </div>
 </template>
 
@@ -43,7 +45,7 @@ export default {
         TabBar,
     },
     // 进行内容的配置
-    mounted() {// 直接当做组件去使用
+    mounted() {// 直接 在页面挂载的时候去使用。
 
         setTimeout(() => {
             this.axios.get("/api/getLocation").then((res)=>{

@@ -8,10 +8,10 @@
                     <span>{{pullDown}}</span>
                 </li>
                 <li v-for="item in movieList" :key="item.id">
-                    <div class="pic_show" @tap="handleToDetail" ><img :src="item.img | setWH('128.180')"></div>
+                    <div class="pic_show" @tap="handleToDetail(item.id)" ><img :src="item.img | setWH('128.180')"></div>
                     <!-- 全局中设置过滤器 -->
                     <div class="info_list">
-                        <h2>{{item.nm}}<img v-if="item.version" src="@assets/3D.png"></h2>
+                        <h2 @tap="handleToDetail(item.id)" >{{item.nm}}<img v-if="item.version" src="@assets/3D.png"></h2>
                         <p>观众评分：<span class="grade">{{item.sc}}</span></p>
                         <p>主演: {{item.star}}</p>
                         <p>{{item.showInfo}}</p>
@@ -29,6 +29,7 @@
 import BScroll from 'better-scroll'
 export default {
     name:"Hotplay",
+    props:['id'],
     data() {
         return {
             movieList:[],
@@ -89,8 +90,9 @@ export default {
         // 图片宽高的问题，设置过滤器
     },
     methods: {
-        handleToDetail(){
-            console.log(1)
+        handleToDetail(id){
+            // console.log(id);
+            this.$router.push('/movie/detail/hot/'+id);
         },
         // 实现父子组件的通信，全局组件scroll
         handleToScroll(location){

@@ -3,7 +3,7 @@
 import Vue from 'vue';
 import MessageBox from './MessageBox'
 
-
+// 外部直接引入 messageBox
 export var messageBox = (function(){
     var defaults = { // 默认值
         title:'',
@@ -20,7 +20,7 @@ export var messageBox = (function(){
         for (var attr in opts) {
             defaults[attr] = opts[attr];
         }
-        var vm = new MyComponent({
+        var vm = new MyComponent({            // 创建vue实例对象
             el:document.createElement("div"),
             data:{
                 title:defaults.title,

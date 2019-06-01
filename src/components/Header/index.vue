@@ -1,6 +1,7 @@
 <template>
     <header id="header">
         <!-- 动态改变 -->
+        <slot/>
 		<h1>{{title}}</h1>
 	</header>
 </template>
