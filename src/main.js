@@ -20,6 +20,12 @@ Vue.component("Scroller",Scroller);
 import Loading from '@components/Loading'
 Vue.component("Loading",Loading);
 
+// // 视频组件
+// import Video from 'video.js'
+// import 'video.js/dist/video-js.css'
+// Vue.prototype.$video = Video
+
+
 
 
 Vue.config.productionTip = false
